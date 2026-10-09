@@ -1,0 +1,286 @@
+{
+    "known_check": {
+        "negative": "KNOWN_VALUE",
+        "four_state": true
+    },
+    "stable_check": {
+        "negative": "STABLE_VALUE",
+        "four_state": false
+    },
+    "encoding_check": {
+        "negative": "ENCODING_VALUE",
+        "four_state": false
+    },
+    "counter_check": {
+        "negative": "COUNTER_UPDATE",
+        "four_state": false
+    },
+    "event_conservation_check": {
+        "negative": "CONSERVATION_COUNT",
+        "four_state": false
+    },
+    "credit_check": {
+        "negative": "CREDIT_ACCOUNTING",
+        "four_state": false
+    },
+    "address_check": {
+        "negative": "ADDRESS_ACCESS",
+        "four_state": false,
+        "extra_cases": {
+            "last_byte": null,
+            "overflow": "ADDRESS_ACCESS",
+            "unaligned": "ADDRESS_ACCESS",
+            "denied": "ADDRESS_ACCESS",
+            "unaccepted": null
+        }
+    },
+    "fifo_check": {
+        "negative": "FIFO_EVENTS",
+        "four_state": false
+    },
+    "pulse_check": {
+        "negative": "PULSE_WIDTH",
+        "four_state": false
+    },
+    "reset_check": {
+        "negative": "RESET_VALUES",
+        "four_state": false,
+        "extra_cases": {
+            "release_alignment": "RESET_ALIGNMENT",
+            "short_reset": "RESET_DURATION"
+        }
+    },
+    "ordering_check": {
+        "negative": "TRANSACTION_ORDER",
+        "four_state": false,
+        "extra_cases": {
+            "duplicate": "TRANSACTION_ORDER",
+            "capacity": "TRANSACTION_ORDER",
+            "deadline": "TRANSACTION_DEADLINE",
+            "reset_pending": null,
+            "disable_pending": null,
+            "same_id_reuse": null,
+            "cancel_then_complete": null,
+            "latency_boundary": null
+        }
+    },
+    "data_integrity_check": {
+        "negative": "TRANSACTION_DATA",
+        "four_state": false,
+        "extra_cases": {
+            "duplicate": "TRANSACTION_ORDER",
+            "capacity": "TRANSACTION_ORDER",
+            "deadline": "TRANSACTION_DEADLINE",
+            "reset_pending": null,
+            "disable_pending": null,
+            "same_id_reuse": null,
+            "cancel_then_complete": null,
+            "latency_boundary": null
+        }
+    },
+    "handshake_check": {
+        "negative": "HANDSHAKE_ORDER",
+        "four_state": false,
+        "extra_cases": {
+            "capacity": "HANDSHAKE_ORDER",
+            "deadline": "HANDSHAKE_LATENCY",
+            "latency_boundary": null,
+            "reset_pending": null,
+            "disable_pending": null,
+            "full_exchange": null
+        }
+    },
+    "ownership_check": {
+        "negative": "OWNERSHIP_ACCESS",
+        "four_state": false
+    },
+    "fairness_check": {
+        "negative": "FAIRNESS_WAIT",
+        "four_state": false,
+        "extra_cases": {
+            "eligibility_grant": null,
+            "eligibility_deadline": "FAIRNESS_WAIT"
+        }
+    },
+    "length_check": {
+        "negative": "LENGTH_PAYLOAD",
+        "four_state": false,
+        "extra_cases": {
+            "boundary": "LENGTH_BOUNDARY",
+            "overflow": "LENGTH_BOUNDARY",
+            "exact_boundary": null,
+            "partial_beats": null,
+            "cancel_pending": null
+        }
+    },
+    "clock_timing_check": {
+        "negative": "CLOCK_HIGH_WIDTH",
+        "four_state": false
+    },
+    "clock_alive_check": {
+        "negative": "CLOCK_ALIVE_DEADLINE",
+        "four_state": false
+    },
+    "clock_gate_check": {
+        "negative": "CLOCK_GATE_EDGE",
+        "four_state": false,
+        "extra_cases": {
+            "between_samples": "CLOCK_GATE_EDGE",
+            "nba_edges": null
+        }
+    },
+    "clock_divider_check": {
+        "negative": "CLOCK_DIVIDER_ALIGNMENT",
+        "four_state": false
+    },
+    "register_check": {
+        "negative": "REGISTER_STATE",
+        "four_state": false
+    },
+    "error_propagation_check": {
+        "negative": "ERROR_RESPONSE",
+        "four_state": false
+    },
+    "configuration_check": {
+        "negative": "CONFIGURATION_EVENTS",
+        "four_state": false
+    },
+    "interrupt_check": {
+        "negative": "INTERRUPT_SPURIOUS",
+        "four_state": false
+    },
+    "access_control_check": {
+        "negative": "ACCESS_EFFECT",
+        "four_state": false,
+        "extra_cases": {
+            "delayed_effect": "ACCESS_EFFECT",
+            "permitted_update": null
+        }
+    },
+    "locking_check": {
+        "negative": "LOCKING_PROTECTION",
+        "four_state": false
+    },
+    "zeroization_check": {
+        "negative": "ZEROIZATION_COMPLETION",
+        "four_state": false
+    },
+    "quiescence_check": {
+        "negative": "QUIESCENCE_EVENTS",
+        "four_state": false
+    },
+    "cancellation_check": {
+        "negative": "CANCELLATION_EVENTS",
+        "four_state": false
+    },
+    "stable_width128": {
+        "family": "stable_check",
+        "negative": "STABLE_VALUE",
+        "four_state": false
+    },
+    "reset_width128": {
+        "family": "reset_check",
+        "negative": "RESET_VALUES",
+        "four_state": false
+    },
+    "data_width128": {
+        "family": "data_integrity_check",
+        "negative": "TRANSACTION_DATA",
+        "four_state": false
+    },
+    "counter_wrap": {
+        "family": "counter_check",
+        "negative": "COUNTER_UPDATE",
+        "four_state": false
+    },
+    "counter_saturate": {
+        "family": "counter_check",
+        "negative": "COUNTER_UPDATE",
+        "four_state": false
+    },
+    "credit_same_cycle": {
+        "family": "credit_check",
+        "negative": "CREDIT_ACCOUNTING",
+        "four_state": false
+    },
+    "ordering_out_of_order": {
+        "family": "ordering_check",
+        "negative": "TRANSACTION_ORDER",
+        "four_state": false
+    },
+    "data_duplicate_ids": {
+        "family": "data_integrity_check",
+        "negative": "TRANSACTION_DATA",
+        "four_state": false
+    },
+    "handshake_bypass": {
+        "family": "handshake_check",
+        "negative": "HANDSHAKE_ORDER",
+        "four_state": false
+    },
+    "cancellation_response": {
+        "family": "cancellation_check",
+        "negative": "CANCELLATION_EVENTS",
+        "four_state": false
+    },
+    "handshake_invalid_policy": {
+        "family": "handshake_check",
+        "cases": {
+            "invalid_configuration": "HANDSHAKE_CFG"
+        }
+    },
+    "counter_invalid_policy": {
+        "family": "counter_check",
+        "cases": {
+            "invalid_configuration": "COUNTER_CFG"
+        }
+    },
+    "credit_invalid_policy": {
+        "family": "credit_check",
+        "cases": {
+            "invalid_configuration": "CREDIT_CFG"
+        }
+    },
+    "encoding_invalid_policy": {
+        "family": "encoding_check",
+        "cases": {
+            "invalid_configuration": "ENCODING_CFG"
+        }
+    },
+    "clock_alive_invalid_policy": {
+        "family": "clock_alive_check",
+        "cases": {
+            "invalid_configuration": "CLOCK_ALIVE_CFG"
+        }
+    },
+    "clock_gate_invalid_policy": {
+        "family": "clock_gate_check",
+        "cases": {
+            "invalid_configuration": "CLOCK_GATE_CFG"
+        }
+    },
+    "clock_divider_invalid_policy": {
+        "family": "clock_divider_check",
+        "cases": {
+            "invalid_configuration": "CLOCK_DIVIDER_CFG"
+        }
+    },
+    "reset_invalid_policy": {
+        "family": "reset_check",
+        "cases": {
+            "invalid_configuration": "RESET_CFG"
+        }
+    },
+    "ordering_invalid_policy": {
+        "family": "ordering_check",
+        "cases": {
+            "invalid_configuration": "TRANSACTION_CFG"
+        }
+    },
+    "data_integrity_invalid_policy": {
+        "family": "data_integrity_check",
+        "cases": {
+            "invalid_configuration": "TRANSACTION_CFG"
+        }
+    }
+}

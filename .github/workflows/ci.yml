@@ -1,0 +1,54 @@
+name: Checker validation
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+            - feat/**
+    workflow_dispatch:
+permissions:
+    contents: read
+concurrency:
+    group: checkers-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+    language-and-activation:
+        runs-on: ubuntu-24.04
+        timeout-minutes: 30
+        env:
+            CCACHE_DISABLE: '1'
+            VERILATOR_REVISION: ea338be98e1e838d3518809ce8899f85a009963c
+        steps:
+            - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+            - name: Install build dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install --no-install-recommends autoconf bison flex g++ help2man libfl-dev make python3-venv zlib1g-dev
+                  python3 -m venv /tmp/checker-tools
+                  /tmp/checker-tools/bin/python -m pip install uv==0.12.21
+                  /tmp/checker-tools/bin/uv sync --locked
+            - name: Build pinned Verilator 5.052
+              run: |
+                  git init /tmp/verilator-src
+                  git -C /tmp/verilator-src remote add origin https://github.com/verilator/verilator.git
+                  git -C /tmp/verilator-src fetch --depth=1 origin "$VERILATOR_REVISION"
+                  git -C /tmp/verilator-src checkout --detach FETCH_HEAD
+                  test "$(git -C /tmp/verilator-src rev-parse HEAD)" = "$VERILATOR_REVISION"
+                  cd /tmp/verilator-src
+                  autoconf
+                  ./configure --prefix=/tmp/verilator-install
+                  make -j2
+                  make install
+            - name: Check IEEE language legality and typed hosts
+              run: /tmp/checker-tools/bin/uv run --locked python scripts/lint.py
+            - name: Run accepted-event and violation fixtures
+              run: /tmp/checker-tools/bin/uv run --locked python scripts/check.py --verilator /tmp/verilator-install/bin/verilator --output sim/ci --workers 2
+            - name: Preserve diagnostics and reports
+              if: always()
+              uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+              with:
+                  name: checker-validation
+                  path: |
+                      sim/ci/summary.json
+                      sim/ci/*/*.log
+                  if-no-files-found: warn
