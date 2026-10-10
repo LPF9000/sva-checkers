@@ -11,6 +11,8 @@ checker NAME ( \
     input logic [WIDTH-1:0] value \
 ); \
     `SVA_ASSERT_LIFECYCLE(clk, reset_n, enable) \
+    const logic [15:0] legal_bits = LEGAL_VALUES; \
+    const logic [255:0] transition_bits = TRANSITIONS; \
     logic [WIDTH-1:0] previous; \
     bit past_valid; \
     always_ff @(posedge clk) begin \
@@ -34,11 +36,11 @@ checker NAME ( \
         value \
     )) || (MODE == 1 && $onehot0( \
         value \
-    )) || (MODE == 2 && (((LEGAL_VALUES) >> int'(value)) & 1'b1)))) \
+    )) || (MODE == 2 && legal_bits[int'(value)]))) \
     else $error("ENCODING_VALUE"); \
     a_transition : \
     assert property (@(posedge clk) disable iff (!reset_n || !enable) \
-        (MODE != 2 || !past_valid || (((TRANSITIONS) >> ((int'(previous) * 16) + int'(value))) & 1'b1))) \
+        (MODE != 2 || !past_valid || transition_bits[(int'(previous) * 16) + int'(value)])) \
     else $error("ENCODING_TRANSITION"); \
 endchecker : NAME
 

@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ACTIVE: set[subprocess.Popen] = set()
 LOCK = threading.Lock()
 STOP = threading.Event()
+INTERRUPT_SIGNAL = signal.SIGINT
 
 
 def run(command: list[str], log: Path, timeout: float) -> int:
@@ -57,7 +58,7 @@ def validate(name: str, specification: dict, output: Path, tool: str) -> dict:
     folder.mkdir()
     binary = folder / "obj" / "Vchecker_tb"
     command = [tool, "--binary", "--timing", "--assert", "--timescale", "1ns/1ps",
-               "-Wno-fatal", "--top-module", "checker_tb", "-I" + str(ROOT / "src"),
+               "--top-module", "checker_tb", "-I" + str(ROOT / "src"),
                "--Mdir", str(folder / "obj"), "--build-jobs", "1",
                str(ROOT / "tests" / (name + "_tb.sv"))]
     build_rc = run(command, folder / "build.log", 180)
@@ -84,7 +85,9 @@ def validate(name: str, specification: dict, output: Path, tool: str) -> dict:
 
 
 def input_hashes() -> dict[str, str]:
-    files = sorted((ROOT / "src").rglob("*")) + sorted((ROOT / "tests").rglob("*"))
+    files = (sorted((ROOT / "src").rglob("*")) + sorted((ROOT / "tests").rglob("*"))
+             + sorted((ROOT / "scripts").rglob("*.py"))
+             + [ROOT / "checkers.f", ROOT / "pyproject.toml", ROOT / "uv.lock"])
     return {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in files
@@ -100,6 +103,12 @@ def stop_processes() -> None:
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
+
+
+def handle_termination(signum: int, _frame: object) -> None:
+    global INTERRUPT_SIGNAL
+    INTERRUPT_SIGNAL = signum
+    raise KeyboardInterrupt
 
 
 def tool_version(tool: str) -> str:
@@ -138,6 +147,7 @@ def main() -> int:
     before_hashes = input_hashes()
     results = []
     interrupted = False
+    signal.signal(signal.SIGTERM, handle_termination)
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {}
         try:
@@ -178,12 +188,13 @@ def main() -> int:
               "source_hashes_after": after_hashes,
               "changed_inputs": changed_inputs,
               "interrupted": interrupted,
+              "interrupt_signal": INTERRUPT_SIGNAL if interrupted else None,
               "tests": results, "passed": sum(bool(r.get("pass")) for r in results), "total": len(results),
               "limits": ["Nested parameterized hosts are slang-elaborated; runtime tests use the identical checker declaration factory at compilation-unit scope", "Four-state X/Z runtime qualification is not established", "No formal proof or alternate-simulator runtime qualification"]}
     (output / "summary.json").write_text(json.dumps(report, indent=4) + "\n")
     print(f"Result {report['passed']}/{report['total']}; evidence: {output}", flush=True)
     if interrupted:
-        return 130
+        return 128 + INTERRUPT_SIGNAL
     return 0 if report["passed"] == report["total"] else 1
 
 

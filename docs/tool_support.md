@@ -50,6 +50,12 @@ lifecycle controls assert known reset and enable values; those controls have not
 been tested with X/Z values. Strict slang elaboration passes without warnings
 or errors, and focused fairness-bubble and gate-edge fixtures pass 2/2.
 
+The complete 49-fixture rerun also passes with compiler warnings treated as
+errors after explicit-width and bounds-expression cleanup. SIGINT and SIGTERM
+failure-path tests retain partial reports and return 130/143; a subsequent normal
+fixture run passes. Input hashes include the runner, declaration factories,
+fixtures and dependency manifests.
+
 ## Limits and remaining qualification
 
 Verilator runs a two-state simulation model. One known-value negative case has

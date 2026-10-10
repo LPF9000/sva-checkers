@@ -33,7 +33,9 @@ The runner retains build commands, compiler/runtime logs, tool version, input
 hashes before and after execution, individual case results and interruption
 status. Modified inputs invalidate the run. Builds are bounded by worker count
 and timeout; each fixture has a private build directory. Process groups are
-terminated on interruption and the partial report remains available.
+terminated on SIGINT or SIGTERM and the partial report remains available. The
+runner records the signal and returns 130 or 143 respectively. Runtime compiler
+warnings are fatal; strict language warnings also fail.
 
 The coherent 49-fixture gate covers base activation, configured policy variants,
 and invalid-policy diagnostics for the current test matrix. Follow-up fairness

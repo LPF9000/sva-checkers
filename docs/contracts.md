@@ -1,6 +1,6 @@
 # Checker contracts
 
-All boolean events are sampled accepted events; a held valid signal is not implicitly an event. Unless stated otherwise, reset or disable clears reference state and cancels temporal obligations. Clock periods use the enclosing 1ns/1ps time scale. See README for declaration and tool support.
+All boolean events are sampled accepted events; a held valid signal is not implicitly an event. Unless stated otherwise, reference models clear at a reference-clock sample with reset or disable asserted; concurrent property obligations abort when reset or disable is asserted. Hold these controls through a sample to clear sampled models. Event-timed clock/reset observers clear asynchronously as their individual contracts specify. Clock periods use the enclosing 1ns/1ps time scale. See README for declaration and tool support.
 
 ## known_check
 
@@ -114,7 +114,7 @@ Parameters: `START_DEADLINE=20ns`, `MAX_GAP=20ns`.
 
 Every actual gated edge must match a source edge at the same simulation time and level, including NBA-delayed propagation. An edge between reference samples is still checked. Sampled pulse-width, parking and following rules additionally require a sufficiently fast independent reference clock. Compose clock_timing_check and clock_alive_check for continuous pulse bounds and missing-edge deadlines.
 
-Sampled edge/park model: clk must oversample both clocks so every transition is seen and full pulses span MIN_PULSE_SAMPLES. Each gated transition must coincide with a sampled source transition to the same level; enabled samples follow source, disabled samples reach PARK_LEVEL by STOP_SAMPLES. This model does not claim detection of sub-reference-sample glitches; compose real-time timing checks for that requirement.
+Sampled edge/park model: clk must oversample both clocks so every transition is seen and full pulses span MIN_PULSE_SAMPLES. Each gated transition must coincide with a sampled source transition to the same level; enabled samples follow source, disabled samples reach PARK_LEVEL by STOP_SAMPLES. The actual-edge rule detects off-source gated transitions between reference samples; sampled pulse-width bounds still require oversampling. Compose real-time timing checks for continuous pulse-width guarantees.
 
 Parameters: `PARK_LEVEL=0`, `STOP_SAMPLES=2`, `MIN_PULSE_SAMPLES=2`.
 

@@ -18,6 +18,10 @@ checker NAME ( \
     `SVA_ASSERT_LIFECYCLE(clk, reset_n, enable) \
     typedef logic [63:0] arithmetic_t; \
     const arithmetic_t alignment_bytes = ALIGNMENT; \
+    typedef logic signed [64:0] bounds_t; \
+    function automatic bit above_base(input bounds_t candidate); \
+        return candidate >= bounds_t'(BASE_ADDR); \
+    endfunction \
     logic [ADDR_WIDTH:0] end_address; \
     always_comb end_address = {1'b0, address} + (ADDR_WIDTH + 1)'(bytes) - 1; \
     initial begin \
@@ -29,8 +33,10 @@ checker NAME ( \
     a_span : \
     assert property (@(posedge clk) disable iff (!reset_n || !enable) !accepted || (!$isunknown( \
         {write, read_allowed, write_allowed, address, bytes} \
-    ) && bytes != 0 && address >= BASE_ADDR && end_address <= LAST_ADDR && !end_address[ADDR_WIDTH] \
-        && arithmetic_t'(address) % alignment_bytes == 0 && (write ? write_allowed : read_allowed))) \
+    ) && bytes != 0 && above_base( \
+        bounds_t'(address) \
+    ) && end_address <= LAST_ADDR && !end_address[ADDR_WIDTH] && \
+        arithmetic_t'(address) % alignment_bytes == 0 && (write ? write_allowed : read_allowed))) \
     else $error("ADDRESS_ACCESS"); \
 endchecker : NAME
 

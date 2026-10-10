@@ -16,6 +16,10 @@ checker NAME ( \
 ); \
     `SVA_ASSERT_LIFECYCLE(clk, reset_n, enable) \
     typedef logic [63:0] arithmetic_t; \
+    typedef logic signed [64:0] bounds_t; \
+    function automatic bit in_bounds(input bounds_t candidate); \
+        return candidate >= bounds_t'(MIN_VALUE) && candidate <= bounds_t'(MAX_VALUE); \
+    endfunction \
     arithmetic_t next_value; \
     arithmetic_t expected_value; \
     bit sampled; \
@@ -61,15 +65,14 @@ checker NAME ( \
     ))) \
     else $error("COUNTER_CONTROL"); \
     a_bounds : \
-    assert property (@(posedge clk) disable iff (!reset_n || !enable) \
-        arithmetic_t'(value) >= arithmetic_t'(MIN_VALUE) && \
-        arithmetic_t'(value) <= arithmetic_t'(MAX_VALUE) && \
-        (!load || (arithmetic_t'(load_value) >= arithmetic_t'(MIN_VALUE) && \
-            arithmetic_t'(load_value) <= arithmetic_t'(MAX_VALUE))) && \
-        (SATURATE || WRAP || \
-            ((!increment || load || arithmetic_t'(value) + arithmetic_t'(STEP) <= arithmetic_t'(MAX_VALUE)) && \
-             (!decrement || load || arithmetic_t'(value) >= arithmetic_t'(MIN_VALUE) + arithmetic_t'(STEP)))) \
-    ) \
+    assert property (@(posedge clk) disable iff (!reset_n || !enable) in_bounds( \
+        bounds_t'(value) \
+    ) && (!load || in_bounds( \
+        bounds_t'(load_value) \
+    )) && (SATURATE || WRAP || \
+           ((!increment || load || arithmetic_t'(value) + arithmetic_t'(STEP) <= \
+             arithmetic_t'(MAX_VALUE)) && (!decrement || load || arithmetic_t'(value) >= \
+                                           arithmetic_t'(MIN_VALUE) + arithmetic_t'(STEP))))) \
     else $error("COUNTER_BOUNDS"); \
     a_update : \
     assert property (@(posedge clk) disable iff (!reset_n || !enable) \
