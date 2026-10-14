@@ -282,5 +282,28 @@
         "cases": {
             "invalid_configuration": "TRANSACTION_CFG"
         }
+    },
+    "counter_negative_min": {
+        "family": "counter_check",
+        "cases": {
+            "invalid_configuration": "COUNTER_CFG"
+        }
+    },
+    "address_negative_base": {
+        "family": "address_check",
+        "cases": {
+            "invalid_configuration": "ADDRESS_CFG"
+        }
+    },
+    "address_oversized_region": {
+        "family": "address_check",
+        "cases": {
+            "invalid_configuration": "ADDRESS_CFG"
+        }
+    },
+    "interrupt_width128": {
+        "family": "interrupt_check",
+        "negative": "INTERRUPT_PENDING",
+        "four_state": false
     }
 }

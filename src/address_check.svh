@@ -27,7 +27,9 @@ checker NAME ( \
     initial begin \
         a_cfg : \
         assert (ADDR_WIDTH > 0 && ADDR_WIDTH <= 63 && SIZE_WIDTH > 0 && \
-        SIZE_WIDTH <= ADDR_WIDTH && BASE_ADDR <= LAST_ADDR && ALIGNMENT > 0) \
+        SIZE_WIDTH <= ADDR_WIDTH && \
+        arithmetic_t'(BASE_ADDR) <= arithmetic_t'(LAST_ADDR) && \
+        arithmetic_t'(LAST_ADDR) < (64'd1 << ADDR_WIDTH) && ALIGNMENT > 0) \
         else $error("ADDRESS_CFG"); \
     end \
     a_span : \

@@ -37,11 +37,18 @@ terminated on SIGINT or SIGTERM and the partial report remains available. The
 runner records the signal and returns 130 or 143 respectively. Runtime compiler
 warnings are fatal; strict language warnings also fail.
 
-The coherent 49-fixture gate covers base activation, configured policy variants,
+The coherent 53-fixture gate covers base activation, configured policy variants,
 and invalid-policy diagnostics for the current test matrix. Follow-up fairness
 and gate-edge cases cover eligibility pause/clear behavior and active/NBA edge
 observation. Nondefault host elaboration covers 128-bit known/stable checkers
-and a FIFO depth of 17. Remaining work includes uncovered family-specific
+and interrupts with bit 127 set in the reset mask, and a FIFO depth of 17.
+Three configuration fixtures reject a negative counter minimum, a negative
+address base and a region beyond the address width. They keep the clock stopped
+and checking disabled, so only the unconditional configuration diagnostic can
+make them pass. A 128-bit interrupt fixture independently checks that the high
+reset bit survives reset, clears correctly and fails when missing. The wide
+module host elaborates under slang; runtime uses the native declaration factory.
+Remaining work includes uncovered family-specific
 boundaries and simultaneous-event combinations, coverage/vacuity review,
 four-state simulation, formal proof, and alternate simulator qualification.
 The host modules are slang-elaborated but are not

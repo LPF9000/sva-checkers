@@ -22,7 +22,7 @@ Parameters: `WIDTH=4`, `MODE=0`, `LEGAL_VALUES=16'hffff`, `TRANSITIONS=256'hffff
 
 ## counter_check
 
-Commands at sample N define value at N+1. Load takes precedence; simultaneous increment/decrement is prohibited. Wrap or saturation is explicit; otherwise crossing bounds fails. Width<=32; widened arithmetic precedes truncation. Reset/disable establish a new baseline.
+Commands at sample N define value at N+1. Load takes precedence; simultaneous increment/decrement is prohibited. Wrap or saturation is explicit; otherwise crossing bounds fails. Width<=32; widened arithmetic precedes truncation. Configured bounds must be nonnegative, ordered and representable in WIDTH; invalid settings fail COUNTER_CFG even with no clock or checking disabled. Reset/disable establish a new baseline.
 
 Parameters: `WIDTH=8`, `MIN_VALUE=0`, `MAX_VALUE=255`, `STEP=1`, `SATURATE=0`, `WRAP=0`.
 
@@ -40,7 +40,7 @@ Parameters: `CAPACITY=4`, `INITIAL_CREDITS=4`, `SAME_CYCLE_RETURN=0`, `ALLOW_ZER
 
 ## address_check
 
-Only accepted accesses are checked. Byte count must be nonzero. The entire widened span must stay in one configured inclusive region without address overflow; alignment and read/write permission are explicit. Compose instances for multiple distinct regions through caller-selected enable.
+Only accepted accesses are checked. Byte count must be nonzero. The entire widened span must stay in one configured inclusive region without address overflow; alignment and read/write permission are explicit. Configured region bounds must be nonnegative, ordered and fit ADDR_WIDTH; invalid settings fail ADDRESS_CFG even with no clock or checking disabled. Compose instances for multiple distinct regions through caller-selected enable.
 
 Parameters: `ADDR_WIDTH=32`, `SIZE_WIDTH=8`, `BASE_ADDR=0`, `LAST_ADDR=4095`, `ALIGNMENT=4`.
 
@@ -144,7 +144,7 @@ Parameters: `WIDTH=8`, `RESET_VALUE=0`, `MAX_LATENCY=3`, `REPLACE_PENDING=0`.
 
 ## interrupt_check
 
-Shadow pending bits follow cause/clear priority. Masking suppresses delivery; MASK_CAPTURE separately chooses whether masked events are captured. Eligible pending work requires a level interrupt within MAX_LATENCY samples, or one pulse per uninterrupted eligible window in PULSE_MODE. A delivered pulse discharges that window; dropping eligibility rearms. pending_value is pre-edge storage. Pulse width can be checked separately.
+Shadow pending bits follow cause/clear priority. Masking suppresses delivery; MASK_CAPTURE separately chooses whether masked events are captured. Eligible pending work requires a level interrupt within MAX_LATENCY samples, or one pulse per uninterrupted eligible window in PULSE_MODE. A delivered pulse discharges that window; dropping eligibility rearms. pending_value is pre-edge storage. RESET_PENDING is normalized to WIDTH bits; the module host accepts a WIDTH-bit reset mask, including bits above bit 31. Pulse width can be checked separately.
 
 Parameters: `WIDTH=4`, `RESET_PENDING=0`, `SET_WINS=1`, `MASK_CAPTURE=0`, `MAX_LATENCY=2`, `PULSE_MODE=0`.
 

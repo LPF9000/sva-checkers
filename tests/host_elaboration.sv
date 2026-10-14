@@ -16,5 +16,13 @@ module host_elaboration (
     timeprecision 1ps;
     known_check #(.WIDTH(128)) known_wide (.*);
     stable_check #(.WIDTH(128)) stable_wide (.*);
+    interrupt_check #(
+        .WIDTH(128),
+        .RESET_PENDING(128'h80000000000000000000000000000000)
+    ) interrupt_wide (
+        .clk(clk), .reset_n(reset_n), .enable(enable),
+        .cause(value), .clear(value), .mask(valid_mask), .pending_value(value),
+        .global_enable(enable), .interrupt(hold)
+    );
     fifo_check #(.DEPTH(17), .ALLOW_EMPTY_BYPASS(1)) fifo_large (.*);
 endmodule

@@ -2,7 +2,7 @@
 `include "interrupt_check.svh"
 module interrupt_check #(
     parameter int WIDTH = 4,
-    parameter int RESET_PENDING = 0,
+    parameter logic [WIDTH-1:0] RESET_PENDING = '0,
     parameter int SET_WINS = 1,
     parameter int MASK_CAPTURE = 0,
     parameter int MAX_LATENCY = 2,

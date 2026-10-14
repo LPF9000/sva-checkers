@@ -16,6 +16,7 @@ checker NAME ( \
     input logic interrupt \
 ); \
     `SVA_ASSERT_LIFECYCLE(clk, reset_n, enable) \
+    const logic [WIDTH-1:0] reset_pending_value = RESET_PENDING; \
     logic [WIDTH-1:0] expected_pending; \
     logic [WIDTH-1:0] captured; \
     bit eligible; \
@@ -27,7 +28,7 @@ checker NAME ( \
     end \
     always_ff @(posedge clk) begin \
         if (!reset_n || !enable) begin \
-            expected_pending <= WIDTH'(RESET_PENDING); \
+            expected_pending <= reset_pending_value; \
             wait_cycles <= 0; \
             delivered <= 0; \
         end else begin \

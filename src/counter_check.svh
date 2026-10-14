@@ -33,7 +33,7 @@ checker NAME ( \
                         arithmetic_t'(STEP) - arithmetic_t'(MAX_VALUE) - 64'd1 : '0); \
             else next_value = arithmetic_t'(value) + arithmetic_t'(STEP); \
         end else if (decrement) begin \
-            if (arithmetic_t'(value) < arithmetic_t'(MIN_VALUE) + arithmetic_t'(STEP)) \
+            if (bounds_t'(value) < bounds_t'(MIN_VALUE) + bounds_t'(STEP)) \
                 next_value = SATURATE ? arithmetic_t'(MIN_VALUE) : \
                     (WRAP ? arithmetic_t'(MAX_VALUE) - (arithmetic_t'(MIN_VALUE) + \
                         arithmetic_t'(STEP) - arithmetic_t'(value) - 64'd1) : '0); \
@@ -52,7 +52,8 @@ checker NAME ( \
     initial begin \
         a_cfg : \
         assert (WIDTH > 0 && WIDTH <= 32 && \
-        MIN_VALUE <= MAX_VALUE && MAX_VALUE < (64'd1 << WIDTH) && STEP > 0 && \
+        arithmetic_t'(MIN_VALUE) <= arithmetic_t'(MAX_VALUE) && \
+        arithmetic_t'(MAX_VALUE) < (64'd1 << WIDTH) && STEP > 0 && \
         arithmetic_t'(STEP) <= arithmetic_t'(MAX_VALUE) - arithmetic_t'(MIN_VALUE) + 64'd1 && \
         !(SATURATE && WRAP)) \
         else $error("COUNTER_CFG"); \
@@ -71,8 +72,8 @@ checker NAME ( \
         bounds_t'(load_value) \
     )) && (SATURATE || WRAP || \
            ((!increment || load || arithmetic_t'(value) + arithmetic_t'(STEP) <= \
-             arithmetic_t'(MAX_VALUE)) && (!decrement || load || arithmetic_t'(value) >= \
-                                           arithmetic_t'(MIN_VALUE) + arithmetic_t'(STEP))))) \
+             arithmetic_t'(MAX_VALUE)) && (!decrement || load || bounds_t'(value) >= \
+                                           bounds_t'(MIN_VALUE) + bounds_t'(STEP))))) \
     else $error("COUNTER_BOUNDS"); \
     a_update : \
     assert property (@(posedge clk) disable iff (!reset_n || !enable) \
